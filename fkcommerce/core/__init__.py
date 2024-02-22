@@ -1,6 +1,13 @@
-from flask import Flask
+import os
 
-def create_app():
+from flask import Flask
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def create_app(config_type = os.getenv("CONFIG_TYPE")):
     app = Flask(__name__)
+
+    app.config.from_object(config_type)
 
     return app
