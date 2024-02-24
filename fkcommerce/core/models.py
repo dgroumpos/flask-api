@@ -32,7 +32,7 @@ class Product(db.Model):
     is_active = Column(Boolean, default=False)
     stock_status =  Column(String(100), default="OUT OF STOCK")
     category_id = Column(Integer, ForeignKey("category.id"))
-    seasonal_event = Column(Integer, ForeignKey("seasonal_event.id", nullable=True))
+    seasonal_event = Column(Integer, ForeignKey("seasonal_event.id"), nullable=True)
 
 
     def __repr__(self):
@@ -47,7 +47,7 @@ class ProductLine(db.Model):
     order = Column(Integer)
     weight = Column(Float)
     created_at = Column(DateTime, server_default=db.text("CURRENT_TIMESTAMP"))
-    product_id =  Column(Integer, ForeignKey("product_id"))
+    product_id =  Column(Integer, ForeignKey("product.id"))
 
     def __repr__(self):
         return f"<ProductLine: {self.id}>"
@@ -71,7 +71,50 @@ class SeasonalEvent(db.Model):
     name = Column(String(100), unique=True)
 
     def __repr__(self):
-        return f"<Name: {self.name}>"
+        return self.name
+    
+class Attribute(db.Model):
+    __tablename__ = "attribute"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200))
+    description = Column(Text)
+
+    def __repr__(self) -> str:
+        return self.name
+    
+class AttributeValue(db.Model):
+    __tablename__ = "attribute_value"
+
+    id = Column(Integer, primary_key=True)
+    attribute_value = Column(String(100))
+    attribute_id = Column(Integer, ForeignKey("attribute.id"))
+
+    def __repr__(self) -> str:
+        return self.attribute_value
+    
+class ProductType(db.Model):
+    __tablename__ = "product_type"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    parent_id = Column(Integer, ForeignKey("product_type.id"))
+
+    def __repr__(self) -> str:
+        return self.name
+    
+class Product_ProductType(db.Model):
+    __tablename__ = "product_product_type"
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("product.id"))
+    product_type_id = Column(Integer, ForeignKey("product_type.id"))
+
+class ProductLine_AttributeValue(db.Model):
+    __tablename__ = "product_line_attribute_value"
+    id = Column(Integer, primary_key=True)
+    attribute_value_id = Column(Integer, ForeignKey("attribute_value.id"))
+    product_line_id = Column(Integer, ForeignKey("product_line.id"))
+
 
 
 
